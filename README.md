@@ -6,28 +6,28 @@ Share your skill profile with a rating to your best of knowledge and understandi
 
 | Skill | Rating | Notes |
 |----- | ------ | -----  |
-| Github | ? | Ex: Know about it, but never really worked on it |
-| Java | ? | ??? |
-| Scala | ? | ??? |
-| Akka | ? | ??? |
-| Docker | ? | ??? |
-| Apache Kafka | ? | ??? |
-| Elastic Search | ? | ??? |
-| Cassandra | ? | ??? |
-| REST | ? | ??? |
+| Github | 3 | Know about it, but never really worked on it |
+| Java | 8 | Worked on it |
+| Scala | 4 | Know some basics but don't know lot of concepts |
+| Akka | 2 | Heard about the tool |
+| Docker | 2 | Heard about the tool |
+| Apache Kafka | 6 | Have some experience working on it |
+| Elastic Search | 4 | Did a trail but not well experienced |
+| Cassandra | 3 | Know about it, but never really worked on it |
+| REST | 3 | Know about it, but never really worked on it |
 | **Concepts** | **Rating** | **Notes** |
-| OOPS | ? | ??? |
-| Functional Programming | ? | ??? |
-| NoSQL | ? | ??? |
-| Micro-Services | ? | ??? |
-| Distributed Systems | ? | Never heard of it |
-| Big Data | ? | ??? |
-| Code Reviews | ? | ??? |
-| Deployment | ? | ??? |
-| Agile | ? | ??? |
-| Logging | ? | ??? |
-| KPI | ? | ??? |
-| Lint | ? | ??? |
-| CI/CD/CM | ? | ??? |
-| DevOps | ? | ??? |
-| Mac/Windows/Linux | ? | ??? |
+| OOPS | 8 | Good at OOPS concepts |
+| Functional Programming | 6 | Have JS experice, know some basic concepts |
+| NoSQL | 6 | Know about the columnar database |
+| Micro-Services | 2 | Don't have any idea of it |
+| Distributed Systems | 5 | Heard of it |
+| Big Data | 7 | Good with the tools. |
+| Code Reviews | 7 | Did some code reviews as part of my work |
+| Deployment | 5 | Have some knowledge of the process |
+| Agile | 7 | Have understanding of Agile |
+| Logging | 5 | Have some understanding of it |
+| KPI | 1| No idea about it |
+| Lint | 1 | No idea about it |
+| CI/CD/CM | 1 | No idea |
+| DevOps | 1 | No idea |
+| Mac/Windows/Linux | 6 | Experience working in windows and Linux but not Mac |
