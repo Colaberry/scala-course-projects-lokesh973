@@ -12,23 +12,28 @@ object SchoolApp extends App {
   val stud1 = Student("AAA",111)
   val stud2 = Student("BBB",222)
   val stud3 = Student("CCC",444)
-  doActivity(stud1,school.course3,"add")
+
+  val course1  = Course("CS",1,"ABC")
+  val course2 = Course("EEE",2,"DEF")
+  val course3 = Course("MECH",3,"GHI")
+
+  doActivity(stud1,course3,"add")
+
+
 
 
   def doActivity(a:Student,b:Course,operation:String):Unit= {
     operation match {
-      case add => a.addClass(b)
-      case delete => a.removeClass(b)
+      case "add" => a.addClass(b)
+      case "delete" => a.removeClass(b)
     }
   }
- /* def courseActivity(c:Any,operation:String): Unit={
+  def courseActivity(c:Course,operation:String): Unit={
     operation match {
-      case add => school.addCourse((Course) c)
-      case delete => school.removeCourse((Course) c)
-      case addStudent => school.addStudent((Student) c)
-      case removeStudent => school.removeStudent((Student) c)
+      case "add" => school.addCourse(c)
+      case "delete" => school.removeCourse(c)
     }
-  }*/
+  }
 
 
   school.addStudent(stud1)
@@ -42,28 +47,24 @@ case class School (schoolName: String, schoolAddress: String){
   val students = ArrayBuffer.empty[Student]
   //var students = List(stud1,stud2,stud3)
 
-  val course1  = Course("CS",1,"ABC")
-  val course2 = Course("EEE",2,"DEF")
-  val course3 = Course("MECH",3,"GHI")
-  var courses = List(course1,course2,course3)
+  var courses = ArrayBuffer.empty[Course]
 
   def getStudents():ArrayBuffer[Student] = {
     students
   }
-  def getCourses():List[Course] = {
+  def getCourses():ArrayBuffer[Course] = {
     courses
   }
 
   def addCourse(c:Course) = {
-    courses = c::courses
+    courses+=c
   }
 
   def removeCourse(c:Course)={
-
+    courses-=c
   }
   def addStudent(s:Student) = {
     students+=s
-    println(s)
   }
 
   def removeStudent(s:Student)={
@@ -82,11 +83,13 @@ case class Student(studentName: String, studentId: Int)
   }
 
   override def toString: String = {
-    "studentName "+studentName+" courses "+classes+" ID "+studentId
+    "Student("+studentName+",  ID "+studentId+","+classes+")"
   }
 }
 
 case class Course(courseName: String, courseId: Int, profName: String)
 {
-
+  override def toString: String = {
+    "Course("+courseName+", "+courseId+","+profName+")"
+  }
 }
