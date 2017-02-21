@@ -63,7 +63,8 @@ trait Service extends Protocols {
 
   def ipApiRequest(request: HttpRequest): Future[HttpResponse] = Source.single(request).via(ipApiConnectionFlow).runWith(Sink.head)
 
-  def fetchIpInfo(ip: String): Future[Either[String, IpInfo]] = {
+  def
+  fetchIpInfo(ip: String): Future[Either[String, IpInfo]] = {
     ipApiRequest(RequestBuilding.Get(s"/json/$ip")).flatMap { response =>
       response.status match {
         case OK => Unmarshal(response.entity).to[IpInfo].map(Right(_))
