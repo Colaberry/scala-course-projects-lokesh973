@@ -1,4 +1,5 @@
 import akka.actor.ActorSystem
+import akka.event.slf4j.Logger
 import akka.kafka.ProducerSettings
 import akka.serialization.ByteArraySerializer
 import akka.stream.ActorMaterializer
@@ -12,14 +13,13 @@ object KafkaFileApp extends App{
   implicit val system = ActorSystem("KafkaFile")
   implicit val mat = ActorMaterializer.create(system)
 
-  println("Creating producer")
+  Logger("Creating Producer")
   val producerActor =classOf[ProducerActor].getName()
-  println("Creating consumer")
-  val consumerActor = classOf[ConsumerActor].getName()
-  println("Main method")
+
+  Logger("Main method")
   akka.Main.main(Array(producerActor))
 
 
-  println("Entering KafkaFileApp")
+  Logger("Entering KafkaFileApp")
 
 }

@@ -7,6 +7,7 @@ import akka.stream.ActorMaterializer
 import akka.stream.scaladsl.{Keep, Sink}
 import org.apache.kafka.clients.consumer.ConsumerConfig
 import org.apache.kafka.clients.producer.ProducerRecord
+import scala.concurrent.ExecutionContext.Implicits.global
 import org.apache.kafka.common.serialization.{ByteArrayDeserializer, ByteArraySerializer, StringDeserializer, StringSerializer}
 
 import scala.concurrent.duration.{Duration, _}
@@ -23,10 +24,10 @@ class ConsumerActor extends Actor with ActorLogging {
       val config = context.system.settings.config.getConfig("akka.kafka.consumer")
        val consumerSettings = ConsumerSettings(context.system, new ByteArrayDeserializer, new StringDeserializer)
           .withBootstrapServers("localhost:9092")
-          .withGroupId("kafkaFile")
+          .withGroupId(KafkaConfig.topic1)
           .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG, "earliest")
 
-        Consumer.committableSource(consumerSettings, Subscriptions.topics("kafkaFile"))
+        Consumer.committableSource(consumerSettings, Subscriptions.topics(KafkaConfig.topic1))
 
 
 
@@ -46,8 +47,8 @@ class ConsumerActor extends Actor with ActorLogging {
 
 
      //For kafkatopic 1 consumer with via option
-     val source = Consumer.committableSource(consumerSettings,Subscriptions.topics("kafkaFile"))
-          .map(processMessage)
+     val source = Consumer.committableSource(consumerSettings,Subscriptions.topics(KafkaConfig.topic1))
+          .mapAsync(3)(processMessage)
           .via(Producer.flow(producerSettings))
           .map(_.message.passThrough)
           .groupedWithin(10, 15 seconds)
@@ -55,6 +56,7 @@ class ConsumerActor extends Actor with ActorLogging {
           .mapAsync(1)(_.commitScaladsl())
 
         val done = source.runWith(Sink.ignore)
+
 
 
     }
@@ -82,10 +84,10 @@ class ConsumerActor extends Actor with ActorLogging {
 
     val newMsg = msgSplit.mkString("\",\"")
 
-    ProducerMessage.Message(new ProducerRecord[Array[Byte], String](
-      "kafkatopic2",
+    Future.successful(ProducerMessage.Message(new ProducerRecord[Array[Byte], String](
+      KafkaConfig.topic2,
       "\""+newMsg
-    ), msg.committableOffset)
+    ), msg.committableOffset))
   }
 }
 object ConsumerActor {

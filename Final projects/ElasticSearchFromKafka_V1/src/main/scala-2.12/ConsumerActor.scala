@@ -46,7 +46,7 @@ class ConsumerActor extends Actor with ActorLogging{
           .withBootstrapServers("localhost:9092")
 
         val source = Consumer.committableSource(consumerSetting,Subscriptions.topics("kafkaFile"))
-          .map(processMessage)
+          .mapAsync(3)(processMessage)
           .via(Producer.flow(producerSettings))
           //        .map(_.committableOffset)
           .map(_.message.passThrough)
@@ -76,13 +76,12 @@ class ConsumerActor extends Actor with ActorLogging{
       msgSplit(5) = "unknown"
     }
     msgSplit(5) = msgSplit(5).toLowerCase()
-
     val newMsg = msgSplit.mkString("\",\"")
 
-    ProducerMessage.Message(new ProducerRecord[Array[Byte], String](
+   Future.successful(ProducerMessage.Message(new ProducerRecord[Array[Byte], String](
       "kafkatopic2",
       "\""+newMsg
-    ), msg.committableOffset)
+    ), msg.committableOffset))
   }
 }
 object ConsumerActor {

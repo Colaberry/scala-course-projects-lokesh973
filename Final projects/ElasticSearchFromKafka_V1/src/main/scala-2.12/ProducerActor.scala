@@ -48,7 +48,8 @@ class ProducerActor extends Actor with ActorLogging{
 
 
 
-     val source: Source[ProducerRecord[Array[Byte], String], NotUsed] = Source.fromIterator(() => genomeFile.getLines().toIterator).map{new ProducerRecord[Array[Byte], String]("kafkaFile", _)}
+     val source: Source[ProducerRecord[Array[Byte], String], NotUsed] = Source
+       .fromIterator(() => genomeFile.getLines().drop(1)).map{new ProducerRecord[Array[Byte], String]("kafkaFile", _)}
     val done: Future[Done] = source.runWith(kafkaSink)
      /* done.onSuccess _ = {
         case Success() => context.stop(self)
