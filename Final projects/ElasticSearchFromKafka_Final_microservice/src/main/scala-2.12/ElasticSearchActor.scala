@@ -29,12 +29,16 @@ import scala.concurrent.Future
 import scala.util.{Failure, Success}
 /**
   * Created by lokesh0973 on 2/19/2017.
+  *
+  * This class creates a Stream that takes initialized source with kafka consumer and raise http requests for each message it
+  * gets from the consumer.
   */
 class ElasticSearchActor extends Actor{
   implicit val system =  ActorSystem()
   implicit val mat = ActorMaterializer()
   val config = ConfigFactory.load()
 
+  //Calling next only once to get the first record(headers) from the file.
   val headers = scala.io.Source.fromFile(
     config.getString("inputFile.filename")).getLines()
   .next()
@@ -46,12 +50,14 @@ class ElasticSearchActor extends Actor{
   }
   override def receive: Receive = {
     case start=>{
-      println("Sending Http requests")
+
+      Logger("Initializing consumer setting")
       val consumerSetting = ConsumerSettings(
         context.system,new ByteArrayDeserializer, new StringDeserializer)
         .withBootstrapServers(config.getString("kafka.broker-list"))
         .withGroupId(config.getString("kafka.topic2"))
         .withProperty(ConsumerConfig.AUTO_OFFSET_RESET_CONFIG,"earliest")
+      //Akka stream to raise http request
       val done = Consumer.committableSource(consumerSetting,Subscriptions.topics(config.getString("kafka.topic2")))
         .mapAsync(5)(processMessage)
         .via(connectionFlow)
@@ -60,34 +66,42 @@ class ElasticSearchActor extends Actor{
     }
   }
   def connectionFlow:Flow[HttpRequest, HttpResponse, Any] = {
-    //Http().outgoingConnection("192.168.99.100", 9200)
+    //Connecting to the elastic search, hostname and port refers to elastic search
     Http().outgoingConnection(config.getString("http.interface"), config.getInt("http.port"))
 
   }
   def processMessage(msg:ElasticSearchActor.Message): Future[HttpRequest] = {
+    println(msg.record.value())
     val request = requestHttp(msg)
     Future.successful(request)
   }
   def createJSONValueStr(str:String):String = {
-    //println("String "+str+" index "+str.indexOf("\""))
+    //Handling the values for JSON, this method removes "" and add \" which is needed for JSON and also put default
+    //values for numeric types
     if(str.indexOf("\"").equals(-1))
       if(str.length()==0) "-1" else str
     else
       "\""+str.replace("\"","")+"\""
   }
   def requestHttp(msg:ElasticSearchActor.Message) ={
-
+    /**
+      * We are using the delimiter based on regex. This will read csv file correctly.
+      * In our case the csv files has string columns enclosed with "", which inturn can have ,
+      * Also the integer columns will not have "". Below regex will handle all these conditions and split fields.
+      * We can have simpler format for header but using same for both.
+      */
     val msgArray = msg.record.value().split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1)
         //println("headers "+headers.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).toList)
     val mapHeaders = headers.split(",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)", -1).toList zip msgArray.toList
     //
     // "\""+a._1.replace("\"","")+"\":\""+a._2.replace("\"","")+"\""
+    //Forming key:value pair text for JSON
     val mapStrings = mapHeaders.map(a=>
       "\""+a._1.replace("\"", "")+"\":"+createJSONValueStr(a._2)+""
       )
-
+    //Building JSON strin
     val jsonString = "{"+mapStrings.mkString(",")+"}"
-
+    // ID to specify for elastic search, each row should have unique id
     val id = msgArray(0).replace("\"","")
 
    /* For Testing purpose with dummy data
@@ -99,7 +113,7 @@ class ElasticSearchActor extends Actor{
    val dataStr = "{\"data\": \""+value+"\"}"
     val data = ByteString(dataStr)
 */
-
+    //Building request to send messages to elastic search
     val request = HttpRequest(
       POST,
       uri = config.getString("elastic.uri")+"/"+id,

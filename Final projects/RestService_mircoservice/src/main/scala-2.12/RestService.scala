@@ -28,6 +28,12 @@ import scala.concurrent.Future
 
 /**
   * Created by lokesh0973 on 2/23/2017.
+  * This class creates a Rest Service that listens on a specified port and host.
+  * The Rest service will request elastic search and return them as response.
+  * This will handle two types of requests, search and fuzzy. search will search for an id
+  * in elastic search and return records, fuzzy will do fuzzy matching and list the no of records
+  * matched.
+  *
   */
 
 object RestService extends App with DefaultJsonProtocol{
@@ -40,6 +46,7 @@ object RestService extends App with DefaultJsonProtocol{
 
 
   def ipApiConnectionFlow:Flow[HttpRequest,HttpResponse,Future[Any]] = {
+    //Out going connection to elastic search to fetch records
     Http().outgoingConnection(config.getString("elastic.hostName"),config.getInt("elastic.port"))
   }
   def fetchFromElastic(term:String, caseVal:Any): Future[Either[String, String]] = {
@@ -51,6 +58,12 @@ object RestService extends App with DefaultJsonProtocol{
       }
     }
   }
+
+  /**
+    * Builds request based on the request type for the service. if search builds a get request to fetch object based on id
+    * if fuzzy builds request to fuzzy match for the term and return count of recods
+    *
+    */
   def buildRequest(term:String, caseVal:Any): HttpRequest = {
     caseVal match  {
       case _:search =>   {
@@ -75,6 +88,11 @@ object RestService extends App with DefaultJsonProtocol{
 
   }
 
+  /**
+    * Service needs routes to know how to handle different type of requests.
+    * Defined routes to handle get request with two different types of URL requests
+    * on genome/search/(id) and genome/fuzzy/(term)
+    */
   val routes=  {
     pathPrefix("genome") {
       (get & path("search" / Segment)) { term =>
@@ -99,13 +117,16 @@ object RestService extends App with DefaultJsonProtocol{
       }
     }
   }
- /* val routes= {
+ /*
+ For testing sending dummy values
+ val routes= {
     (get & path(Segment)){
       term => complete{
         "AAAA"+term
       }
     }
   }*/
+  //Binds and listens for incoming requests on the host and post specified
   Http().bindAndHandle(routes, config.getString("http.interface"), config.getInt("http.port"))
 
 }

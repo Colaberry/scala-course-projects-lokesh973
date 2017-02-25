@@ -2,8 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkfromkafkasource.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkfromkafkasource.iml" />
-      <module fileurl="file://$PROJECT_DIR$/.idea/modules/kafkfromkafkasource-build.iml" filepath="$PROJECT_DIR$/.idea/modules/kafkfromkafkasource-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mainFile.iml" filepath="$PROJECT_DIR$/.idea/modules/mainFile.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/mainFile-build.iml" filepath="$PROJECT_DIR$/.idea/modules/mainFile-build.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server.iml" filepath="$PROJECT_DIR$/.idea/modules/server.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/server-build.iml" filepath="$PROJECT_DIR$/.idea/modules/server-build.iml" />
     </modules>
   </component>
 </project>

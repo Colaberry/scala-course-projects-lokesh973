@@ -9,6 +9,8 @@
           <set>
             <option value="$PROJECT_DIR$" />
             <option value="$PROJECT_DIR$/project" />
+            <option value="$PROJECT_DIR$/server" />
+            <option value="$PROJECT_DIR$/server/project" />
           </set>
         </option>
         <option name="resolveSbtClassifiers" value="true" />
