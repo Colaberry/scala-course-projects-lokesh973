@@ -4,7 +4,7 @@ This project aims in bulding a pipeline where data was read from a file, put int
 
 Dataset:
 
-The dataset that being used is of genome data which is a csv file with records of different samples.
+The dataset that being used is of genome data which is a csv file with records of different samples. This data file is uploaded to the current folder.
 
 To build this project using Akka micro services, four individual micro services are defined.
 
