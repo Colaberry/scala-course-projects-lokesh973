@@ -23,7 +23,7 @@ class AkkaSender extends Actor{
           sender() ! "stop"
       }
   }
-    case end => {
+    case "stop" => {
       println("The End")
       context.stop(self)
     }
